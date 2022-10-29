@@ -3,7 +3,6 @@ package com.api.parkingcontrol.Controller;
 import com.api.parkingcontrol.DTOs.ParkingSpotPostDto;
 import com.api.parkingcontrol.Models.ParkingSpotModel;
 import com.api.parkingcontrol.Service.ParkingSpotService;
-import com.fasterxml.jackson.databind.util.BeanUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -53,9 +52,19 @@ public class ParkingSpotController {
     @GetMapping("/{id}")
     public ResponseEntity<Object> getParkingSlotById(@PathVariable(value = "id") UUID id){
         Optional<ParkingSpotModel> parkingSpotModelOptional = parkingSpotService.getById(id);
-        if (!parkingSpotModelOptional.isPresent()){
+        if (!parkingSpotModelOptional.isPresent())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Parking spot not found.");
-        }
+
         return ResponseEntity.status(HttpStatus.OK).body(parkingSpotModelOptional.get());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteParkingSlotById(@PathVariable(value = "id") UUID id){
+        Optional<ParkingSpotModel> parkingSpotModelOptional = parkingSpotService.getById(id);
+        if (!parkingSpotModelOptional.isPresent())
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Parking spot not found.");
+
+        parkingSpotService.delete(parkingSpotModelOptional.get());
+        return ResponseEntity.status(HttpStatus.OK).body("Parking spot deleted successfully.");
     }
 }
